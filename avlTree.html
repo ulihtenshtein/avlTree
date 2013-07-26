@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>AVL-Tree</title>
+	<script type="text/javascript" src="avlTree.js"></script>
+	<link rel="stylesheet" type="text/css" href="avlTree.css" />
+</head>
+<body>
+<script>
+ function deepth(node) {
+          return (node) ? 1 + Math.max(deepth(node.left), deepth(node.right)) : 0;
+    }
+function showTree(node, color, bgcolor) {
+        var stringTree = '<ul>';
+        if (node) {
+          stringTree += '<li style="color:' + color + ';background-color:' + bgcolor + '">' + node.key + ', b:' + (deepth(node.right) - deepth(node.left));
+          if (node.right) {
+            stringTree += showTree(node.right, 'red', '#09f');
+          }
+          if (node.left) {
+            stringTree += showTree(node.left, 'blue', 'red');
+          }
+        }
+        return stringTree += '</ul>';
+    }
+function addNode() {
+	var input = document.getElementById('key');
+	if( input ) {
+		var key = parseInt(input.value);
+		if( key ) {
+			if( !node ) {
+				node  = new Node(key);
+			} else {
+				node = node.insert( new Node(key) );
+			}
+			div.innerHTML = node.showTree(node,'green', '#ffc');
+		} else { console.log('error parse key');}
+		
+	} else { console.log('error get input'); }
+}
+ var tree = {
+        key: 1,
+        left: {
+          key: 2,
+          left: {
+            key: 4,
+            left: {
+              key: 8,
+              left: null,
+              right: null
+            },
+            right: null
+          },
+          right: {
+            key: 5,
+            left: {
+              key: 9,
+              left: null,
+              right: null
+            },
+            right: {
+              key: 10,
+              left: null,
+              right: null
+            }
+          }
+        },
+        right: {
+          key: 3,
+          left: {
+            key: 6,
+            left: null,
+            right: null
+          },
+          right: {
+            key: 7,
+            left: {
+              key: 11,
+              left: null,
+              right: null
+            },
+            right: null
+          }
+        }
+      };
+	var node;// = new Node(1);
+      //node = node.insert(new Node(2));
+      //node = node.insert(new Node(3));
+      //node = node.insert(new Node(4));
+      //node = node.insert(new Node(5));
+      //node = node.insert(new Node(6));
+      //node = node.insert(new Node(0));
+       // node = node.insert(new Node(7));
+      // node = node.insert(new Node(8));
+      // node = node.insert(new Node(9));
+      // node = node.insert(new Node(10));
+      // node = node.insert(new Node(11));
+      var div = document.createElement('div');
+      //div.innerHTML = showTree(node, 'green', '#ff0');
+	  //div.innerHTML = node.showTree(node,'green', '#ffc');
+      document.body.appendChild(div);
+</script>
+<input type="text" placeholder='input number' id='key'/>
+<input type='button' value='ok' onclick='addNode()'/>
+
+</body>
+</html>
