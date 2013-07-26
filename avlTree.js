@@ -4,14 +4,59 @@ function Node(key) {
 	this.key = key;
 	this.left = this.right = null;
 	this.balance = 0;
+	function deepth(node) {
+          return (node) ? 1 + Math.max(deepth(node.left), deepth(node.right)) : 0;
+    }
+	function simpleRotation(node, to) {
+		var ato = (to == 'left') ? 'right' : 'left';
+		var root = node[to];
+		node[to] = root[ato];
+		root[ato] = node;
+		//node.balance = root.balance = 0;
+		node.balance = deepth(node.right) - deepth(node.left);
+		root.balance = deepth(root.right) - deepth(root.left);
+		return root;
+	}
+	function doubleRotation(node, to){
+		var ato = (to == 'left') ? 'right' : 'left';
+		var rootTo = node[to];
+		var root = rootTo[ato];
+		
+		rootTo[ato] = root[to];
+		node[to] = root[ato];
+		root[to] = rootTo;
+		root[ato] = node;
+		rootTo.balance = deepth(rootTo.right) - deepth(rootTo.left);
+		node.balance = deepth(node.right) - deepth(node.left);
+		root.balance = deepth(root.right) - deepth(root.left);
+		return root;
+	}
+}
+Node.prototype.simpleRotation = function( node, to ) {
+	var ato = (to == 'left') ? 'right' : 'left';
+		var root = node[to];
+		node[to] = root[ato];
+		root[ato] = node;
+		//node.balance = root.balance = 0;
+		node.balance = deepth(node.right) - deepth(node.left);
+		root.balance = deepth(root.right) - deepth(root.left);
+		return root;
+}
+Node.prototype.doubleRotation = function ( node, to ) {
+	var ato = (to == 'left') ? 'right' : 'left';
+		var rootTo = node[to];
+		var root = rootTo[ato];
+		
+		rootTo[ato] = root[to];
+		node[to] = root[ato];
+		root[to] = rootTo;
+		root[ato] = node;
+		rootTo.balance = deepth(rootTo.right) - deepth(rootTo.left);
+		node.balance = deepth(node.right) - deepth(node.left);
+		root.balance = deepth(root.right) - deepth(root.left);
+		return root;
 }
 Node.prototype.insert = function (node) {
-	function deepth(node) {
-          if( node ) {
-            return 1 + Math.max(deepth(node.left), deepth(node.right));
-          }
-          return 0;
-        }
 	var to, result;
 	to = (this.key < node.key) ? 'right' : 'left';
 	//если есть поддеревья - спускаемся, если лист - добавляем
@@ -25,12 +70,11 @@ Node.prototype.insert = function (node) {
 		return this;
 	}
 	//длина поддерева не увеличилась ( deepth of the tree wasn't increased )
-	if(result.balance == 0) {
+	this.balance = deepth(this.right) - deepth(this.left);
+	if(result.balance == 0 || this.balance == 0) {
 		this[to] = result;
 		return this;
 	}
-	//(to == 'left') ? this.balance-- : this.balance++;
-	this.balance = deepth(this.right) - deepth(this.left);
 	// длинна поддерева увеличилась, но баллансировка не нарушилась
 	// ( deepth of the tree was increased but balance didn't break
 	if( Math.abs(this.balance) == 1 ) {
@@ -41,32 +85,11 @@ Node.prototype.insert = function (node) {
 	var tb = this.balance;
 	
 	//простое вращение ( simple rotation)
-	if( rb * tb) {
-		var ato = (to == 'left') ? 'right' : 'left';
-		var root = this[to];
-		this[to] = root[ato];
-		root[ato] = this;
-		this.balance = root.balance = 0;
-		return root;
+	if( rb * tb > 0 ) {
+		return this.simpleRotation(this, to);
 	} else {
 	//двойное вращение (double rotation)
-		var ato = (to == 'left') ? 'right' : 'left';
-		var rootTo = this[to];
-		var root = rootTo[ato];
-		
-		rootTo[ato] = root[to];
-		this[to] = root[ato];
-		root[to] = rootTo;
-		root[ato] = this;
-		if(root.balance < 0 ) {
-			rootTo.balance = (to == 'left')? 0:1;
-			this.balance = (to == 'left')? 1:0;
-		} else {
-			rootTo.balance = (to == 'left')? -1:0;
-			this.balance = (to == 'left')? 0:-1;
-		}
-		root.balance = 0;
-		return root;
+		return  this.doubleRotation( this, to);
 	}	
 }
 

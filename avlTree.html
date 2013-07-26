@@ -27,7 +27,7 @@ function addNode() {
 	var input = document.getElementById('key');
 	if( input ) {
 		var key = parseInt(input.value);
-		if( key ) {
+		if( !isNaN(key) ) {
 			if( !node ) {
 				node  = new Node(key);
 			} else {
