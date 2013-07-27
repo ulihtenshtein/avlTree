@@ -6,8 +6,18 @@
 	<link rel="stylesheet" type="text/css" href="avlTree.css" />
 </head>
 <body>
+<div id='insert'>
+    <label>insert</label>
+    <input type="text" placeholder='input number' id='addKey'/>
+    <input type='button' value='add' onclick='addNode()'/>
+</div>
+<div id='delete'>
+	<label>delete</label>
+	<input type='text' placeholder='input remove key' id='removeKey' />
+	<input type='button' value='remove' onclick='removeNode()' />
+</div>
 <script>
- function deepth(node) {
+function deepth(node) {
           return (node) ? 1 + Math.max(deepth(node.left), deepth(node.right)) : 0;
     }
 function showTree(node, color, bgcolor) {
@@ -24,7 +34,7 @@ function showTree(node, color, bgcolor) {
         return stringTree += '</ul>';
     }
 function addNode() {
-	var input = document.getElementById('key');
+	var input = document.getElementById('addKey');
 	if( input ) {
 		var key = parseInt(input.value);
 		if( !isNaN(key) ) {
@@ -38,70 +48,25 @@ function addNode() {
 		
 	} else { console.log('error get input'); }
 }
- var tree = {
-        key: 1,
-        left: {
-          key: 2,
-          left: {
-            key: 4,
-            left: {
-              key: 8,
-              left: null,
-              right: null
-            },
-            right: null
-          },
-          right: {
-            key: 5,
-            left: {
-              key: 9,
-              left: null,
-              right: null
-            },
-            right: {
-              key: 10,
-              left: null,
-              right: null
-            }
-          }
-        },
-        right: {
-          key: 3,
-          left: {
-            key: 6,
-            left: null,
-            right: null
-          },
-          right: {
-            key: 7,
-            left: {
-              key: 11,
-              left: null,
-              right: null
-            },
-            right: null
-          }
-        }
-      };
-	var node;// = new Node(1);
-      //node = node.insert(new Node(2));
-      //node = node.insert(new Node(3));
-      //node = node.insert(new Node(4));
-      //node = node.insert(new Node(5));
-      //node = node.insert(new Node(6));
-      //node = node.insert(new Node(0));
-       // node = node.insert(new Node(7));
-      // node = node.insert(new Node(8));
-      // node = node.insert(new Node(9));
-      // node = node.insert(new Node(10));
-      // node = node.insert(new Node(11));
-      var div = document.createElement('div');
-      //div.innerHTML = showTree(node, 'green', '#ff0');
-	  //div.innerHTML = node.showTree(node,'green', '#ffc');
-      document.body.appendChild(div);
+function removeNode() {
+	var  input = document.getElementById('removeKey');
+	if ( input ) {
+		var key = parseInt(input.value);
+		if( !isNaN(key) ) {
+			if ( node ) {
+				node = node.remove( new Node(key) );
+				if( node ) {
+					div.innerHTML = node.showTree(node,'green', '#ffc');
+				}  else { 
+					div.innerHTML = '';
+				}
+			}
+		} else { console.log('err parse key'); }
+	} else { console.log('err get input'); }
+}
+	var node;
+    var div = document.createElement('div');
+    document.body.appendChild(div);
 </script>
-<input type="text" placeholder='input number' id='key'/>
-<input type='button' value='ok' onclick='addNode()'/>
-
 </body>
 </html>

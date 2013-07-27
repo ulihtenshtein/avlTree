@@ -4,3 +4,12 @@ li {
       border-top:1px solid black;
       display:inline-block;
     }
+	
+#delete, #insert {
+	position: absolute;
+	width: 30%;
+	right: 10px;
+}
+#delete {
+	top: 50px;
+}
