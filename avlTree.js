@@ -53,7 +53,9 @@ Node.prototype.insert = function (node) {
 	
 	
 	this[to] = result;
-	this.balance = balance(this);
+	return this.rebalance();
+	
+	/* this.balance = balance(this);
 	//длина поддерева не увеличилась ( deepth of the tree wasn't increased )
 	// или (or)
 	// длинна поддерева увеличилась, но баллансировка не нарушилась
@@ -71,7 +73,8 @@ Node.prototype.insert = function (node) {
 	} else {
 	//двойное вращение (double rotation)
 		return  this.doubleRotation( this, to);
-	}	
+	}
+	*/
 }
 Node.prototype.remove = function (node) {
 
@@ -81,102 +84,60 @@ Node.prototype.remove = function (node) {
 	function getLeaf(node) {
 		return (node.left) ? node.left : node.right;
 	}
-	function getMinNode(node) {
-		if ( node.left ) {
-			var b = node;
-			var a = b.left;
-			while(a.left) { b = a; a = a.left};
-			b.left = a.right;
-			a.right = node;
-			b.balance = balance(b);
-			return a;
-		} else if( node.right) {
-			return node.right
-			} else { return node;};
-	}
-	function getMaxNode(node) {
-		if ( node.right ) {
-			var b = node;
-			var a = b.right;
-			while(a.right) { b = a; a = a.right};
-			b.right = a.left;
-			a.left = node;
-			b.balance = balance(b);
-			return a;
-		} else if( node.left) {
-			return node.left
-			} else { return node;};
-	}
-	var getNode = {
-		left:function(node) {
-			if ( node.right ) {
-				var b = node;
-				var a = b.right;
-				while(a.right) { b = a; a = a.right};
-				b.right = a.left;
-				a.left = node;
-				b.balance = balance(b);
-				return a;
-			} else if( node.left) {
-				return node.left
-			} else { return node;};
-		},
-		right:function(node) {
-			if ( node.left ) {
-				var b = node;
-				var a = b.left;
-				while(a.left) { b = a; a = a.left};
-				b.left = a.right;
-				a.right = node;
-				b.balance = balance(b);
-				return a;
-			} else if( node.right) {
-				return node.right
-			} else { return node;};
+	function getNode (node, to) {
+		if (isLeaf(node) ) {
+			return getLeaf(node);
 		}
-	};
-	var to = (this.key < node.key) ? 'right' : 'left';
-	var ato = (to == 'left') ? 'right' : 'left';
-	var curNode = this;
-	if (this.key < node.key || this.key > node.key) {	
-		if ( this[to] ) {
-				if ( this[to].key != node.key )  {
-					this[to] = this[to].remove(node);
-				} else {
-					var target = this[to];
-					if( isLeaf(target) ) {
-						this[to] = getLeaf(target);
-					} else {
-						//ищем лист для замены, спускаясь дальше
-						var  a = getNode[to](target[to]); 
-						a[ato] = target[ato];
-						a.balance = balance(a);
-						this[to] = a;
-					}
-				}
-		}	
-	} else {
-			//искомый елемен является корнем
-		if ( isLeaf(this) ) {
-				return getLeaf(this);
-		} else {
-				var  a = getNode[to](this[to]);
-				a[ato] = this[ato];
-				a.balance = balance(a);
-				if( a.balance == 2 ) {
-					
-				}
-				return a;
-		}
+		return node[to] = getNode(node[to], to);
+	}	
+	function whereLeaf(node) {
+		var to = '';
+		if ( isLeaf(node.left) )  return to = 'left';
+		if ( isLeaf(node.right) ) return to = 'right';
+		return to;
 	}
 	
+	var to = (this.key < node.key) ? 'right' : 'left';
+	
+	if (this.key != node.key) {
+		if ( this[to] ) {
+			this[to] = this[to].remove(node);
+			return this.rebalance();
+		}
+	} else { // it's node we are searching
+		
+		if ( isLeaf(this) ) return getLeaf(this);
+			//node - isn't leaf but its children may be a leaf
+		if( to = whereLeaf(this) ) {
+			var ato = (to == 'left') ? 'right' : 'left';
+			if ( this[to][ato] == null ) {
+				this[to][ato] = this[ato];
+				return this[to].rebalance();
+			} else {
+				this[to][ato][ato] = this[ato];
+				this[to][ato][to] = this[to];
+				return this[to][ato].rebalance();
+			}
+		} else {
+			//seach leaf for change to node
+			to = (this.balance > 0 ) ? 'right' : 'left';
+			var leaf = getNode(this[to], to);
+			this[to] = this[to].remove(leaf);
+			leaf.left = this.left;
+			leaf.right = this.right;
+			return leaf.rebalance();
+		}
+	}
+	return this;
+}
+Node.prototype.rebalance = function () {
 	this.balance = balance(this);
 	if ( Math.abs(this.balance) == 2)  {
 		var rb = (this.balance > 0 ) ? this.right.balance : this.left.balance;
 	    var tb = this.balance;
 	    var to = (this.balance > 0 ) ? 'right' : 'left';
 	    //простое вращение ( simple rotation)
-	    if( rb >= 0 * tb > 0 || rb <= 0 * tb < 0) {
+	    if( rb * tb > 0 ) {
 	    	return this.simpleRotation(this, to);
 	    } else {
 	    //двойное вращение (double rotation)
@@ -185,8 +146,8 @@ Node.prototype.remove = function (node) {
 	}
 	return this;
 }
-/*
-Node.prototype.showTree = function(node,color, bgcolor) {
+
+/* Node.prototype.showTree = function(node,color, bgcolor) {
 	 var node = node || this;
 	 var bgcolor = bgcolor || '#ff0';
 	 var color = color || 'green';
