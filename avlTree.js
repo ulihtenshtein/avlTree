@@ -4,23 +4,24 @@ function Node(key) {
 	this.key = key;
 	this.left = this.right = null;
 	this.balance = 0;
-	function deepth(node) {
+}
+function balance (node) {
+		function deepth(node) {
           return (node) ? 1 + Math.max(deepth(node.left), deepth(node.right)) : 0;
-    };
-	function balance (node) {
+		};
 		return deepth(node.right) - deepth(node.left);
 	};
-}
 Node.prototype.simpleRotation = function( node, to ) {
 	var ato = (to == 'left') ? 'right' : 'left';
 		var root = node[to];
 		node[to] = root[ato];
 		root[ato] = node;
-		node.balance = deepth(node.right) - deepth(node.left);
-		root.balance = deepth(root.right) - deepth(root.left);
+		node.balance = balance(node);
+		root.balance = balance(root);
 		return root;
 }
 Node.prototype.doubleRotation = function ( node, to ) {
+	
 	var ato = (to == 'left') ? 'right' : 'left';
 	var rootTo = node[to];
 	var root = rootTo[ato];
@@ -30,9 +31,9 @@ Node.prototype.doubleRotation = function ( node, to ) {
 	root[to] = rootTo;
 	root[ato] = node;
 	
-	rootTo.balance = deepth(rootTo.right) - deepth(rootTo.left);
-	node.balance = deepth(node.right) - deepth(node.left);
-	root.balance = deepth(root.right) - deepth(root.left);
+	rootTo.balance = balance(rootTo);
+	node.balance = balance(node);
+	root.balance = balance(root);
 	return root;
 }
 Node.prototype.insert = function (node) {
@@ -46,13 +47,13 @@ Node.prototype.insert = function (node) {
 		result = this[to].insert(node);
 	} else {
 		this[to] = node;
-		this.balance = deepth(this.right) - deepth(this.left);
+		this.balance = balance(this);
 		return this;
 	}
 	
 	
 	this[to] = result;
-	this.balance = deepth(this.right) - deepth(this.left);
+	this.balance = balance(this);
 	//длина поддерева не увеличилась ( deepth of the tree wasn't increased )
 	// или (or)
 	// длинна поддерева увеличилась, но баллансировка не нарушилась
@@ -73,6 +74,7 @@ Node.prototype.insert = function (node) {
 	}	
 }
 Node.prototype.remove = function (node) {
+
 	function isLeaf(node) {
 		return (node.left == null || node.right == null);
 	}
@@ -105,63 +107,76 @@ Node.prototype.remove = function (node) {
 			return node.left
 			} else { return node;};
 	}
-	function balance (node) {
-		return deepth(node.right) - deepth(node.left);
-	}
-	if (this.key < node.key ) {
-		
-	if ( this.right ) {
-			if ( this.right.key != node.key )  {
-				this.right = this.right.remove(node);
-			} else {
-				var target = this.right;
-				if( isLeaf(target) ) {
-					this.right = getLeaf(target);
-				} else {
-				   //ищем лист для замены, спускаясь дальше
-				  var  a = getMinNode(target.right); 
-				  a.left = target.left;
-				  a.balance = balance(a);
-				  this.right = a;
-				}
-			}
+	var getNode = {
+		left:function(node) {
+			if ( node.right ) {
+				var b = node;
+				var a = b.right;
+				while(a.right) { b = a; a = a.right};
+				b.right = a.left;
+				a.left = node;
+				b.balance = balance(b);
+				return a;
+			} else if( node.left) {
+				return node.left
+			} else { return node;};
+		},
+		right:function(node) {
+			if ( node.left ) {
+				var b = node;
+				var a = b.left;
+				while(a.left) { b = a; a = a.left};
+				b.left = a.right;
+				a.right = node;
+				b.balance = balance(b);
+				return a;
+			} else if( node.right) {
+				return node.right
+			} else { return node;};
 		}
-		
-	} else if( this.key > node.key ) {
-		if ( this.left ) {
-			if( this.left.key != node.key ) {
-				this.left = this.left.remove(node);
-			} else {
-				target = this.left;
-				if( isLeaf(target) ) {
-					this.left = getLeaf(target);
+	};
+	var to = (this.key < node.key) ? 'right' : 'left';
+	var ato = (to == 'left') ? 'right' : 'left';
+	var curNode = this;
+	if (this.key < node.key || this.key > node.key) {	
+		if ( this[to] ) {
+				if ( this[to].key != node.key )  {
+					this[to] = this[to].remove(node);
 				} else {
-					//ищем лист для замены, спускаясь дальше
-					var   a = getMaxNode(target.left);
-					a.right = target.right;
-					a.balance = balance(a);
-					this.left = a;
+					var target = this[to];
+					if( isLeaf(target) ) {
+						this[to] = getLeaf(target);
+					} else {
+						//ищем лист для замены, спускаясь дальше
+						var  a = getNode[to](target[to]); 
+						a[ato] = target[ato];
+						a.balance = balance(a);
+						this[to] = a;
+					}
 				}
-			}
-		}
+		}	
 	} else {
-		//искомый елемен является корнем
+			//искомый елемен является корнем
 		if ( isLeaf(this) ) {
-			return getLeaf(this);
+				return getLeaf(this);
 		} else {
-			var  a = getMinNode(this.right);
-			a.left = this.left;
-			a.balance = balance(a);
-			return a;
+				var  a = getNode[to](this[to]);
+				a[ato] = this[ato];
+				a.balance = balance(a);
+				if( a.balance == 2 ) {
+					
+				}
+				return a;
 		}
 	}
+	
 	this.balance = balance(this);
 	if ( Math.abs(this.balance) == 2)  {
 		var rb = (this.balance > 0 ) ? this.right.balance : this.left.balance;
 	    var tb = this.balance;
 	    var to = (this.balance > 0 ) ? 'right' : 'left';
 	    //простое вращение ( simple rotation)
-	    if( rb * tb > 0 ) {
+	    if( rb >= 0 * tb > 0 || rb <= 0 * tb < 0) {
 	    	return this.simpleRotation(this, to);
 	    } else {
 	    //двойное вращение (double rotation)
@@ -170,6 +185,7 @@ Node.prototype.remove = function (node) {
 	}
 	return this;
 }
+/*
 Node.prototype.showTree = function(node,color, bgcolor) {
 	 var node = node || this;
 	 var bgcolor = bgcolor || '#ff0';
@@ -186,4 +202,18 @@ Node.prototype.showTree = function(node,color, bgcolor) {
           }
         }
         return stringTree += '</ul>';                
-}                                                   
+} 
+*/                                                  
+function showTree(node, color, bgcolor) {
+        var stringTree = '<ul>';
+        if (node) {
+          stringTree += '<li style="color:' + color + ';background-color:' + bgcolor + '">' + node.key + ', b:' + node.balance;
+          if (node.right) {
+            stringTree += showTree(node.right, 'red', '#09f');
+          }
+          if (node.left) {
+            stringTree += showTree(node.left, 'blue', 'red');
+          }
+        }
+        return stringTree += '</ul>';
+    }

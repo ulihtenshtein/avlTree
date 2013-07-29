@@ -5,11 +5,9 @@ li {
       display:inline-block;
     }
 	
-#delete, #insert {
+#buttons {
 	position: absolute;
 	width: 30%;
 	right: 10px;
-}
-#delete {
-	top: 50px;
+	border:1px solid red;
 }

@@ -6,33 +6,25 @@
 	<link rel="stylesheet" type="text/css" href="avlTree.css" />
 </head>
 <body>
-<div id='insert'>
-    <label>insert</label>
-    <input type="text" placeholder='input number' id='addKey'/>
-    <input type='button' value='add' onclick='addNode()'/>
-</div>
-<div id='delete'>
-	<label>delete</label>
-	<input type='text' placeholder='input remove key' id='removeKey' />
-	<input type='button' value='remove' onclick='removeNode()' />
+<div id='buttons'>
+	<div id='insert'>
+		<label>insert</label>
+		<input type="text" placeholder='input number' id='addKey'/>
+		<input type='button' value='add' onclick='addNode()'/>
+	</div>
+	<div id='delete'>
+		<label>delete</label>
+		<input type='text' placeholder='input remove key' id='removeKey' />
+		<input type='button' value='remove' onclick='removeNode()' />
+	</div>
 </div>
 <script>
+/*
 function deepth(node) {
           return (node) ? 1 + Math.max(deepth(node.left), deepth(node.right)) : 0;
     }
-function showTree(node, color, bgcolor) {
-        var stringTree = '<ul>';
-        if (node) {
-          stringTree += '<li style="color:' + color + ';background-color:' + bgcolor + '">' + node.key + ', b:' + (deepth(node.right) - deepth(node.left));
-          if (node.right) {
-            stringTree += showTree(node.right, 'red', '#09f');
-          }
-          if (node.left) {
-            stringTree += showTree(node.left, 'blue', 'red');
-          }
-        }
-        return stringTree += '</ul>';
-    }
+	
+	*/
 function addNode() {
 	var input = document.getElementById('addKey');
 	if( input ) {
@@ -43,7 +35,7 @@ function addNode() {
 			} else {
 				node = node.insert( new Node(key) );
 			}
-			div.innerHTML = node.showTree(node,'green', '#ffc');
+			div.innerHTML = showTree(node,'green', '#ffc');
 		} else { console.log('error parse key');}
 		
 	} else { console.log('error get input'); }
@@ -56,7 +48,7 @@ function removeNode() {
 			if ( node ) {
 				node = node.remove( new Node(key) );
 				if( node ) {
-					div.innerHTML = node.showTree(node,'green', '#ffc');
+					div.innerHTML = showTree(node,'green', '#ffc');
 				}  else { 
 					div.innerHTML = '';
 				}
