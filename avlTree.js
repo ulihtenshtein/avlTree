@@ -54,27 +54,6 @@ Node.prototype.insert = function (node) {
 	
 	this[to] = result;
 	return this.rebalance();
-	
-	/* this.balance = balance(this);
-	//длина поддерева не увеличилась ( deepth of the tree wasn't increased )
-	// или (or)
-	// длинна поддерева увеличилась, но баллансировка не нарушилась
-	// ( deepth of the tree was increased but balance didn't break
-	if(result.balance == 0 || this.balance == 0 || Math.abs(this.balance) == 1) {
-		return this;
-	}
-	
-	var rb = result.balance;
-	var tb = this.balance;
-	
-	//простое вращение ( simple rotation)
-	if( rb * tb > 0 ) {
-		return this.simpleRotation(this, to);
-	} else {
-	//двойное вращение (double rotation)
-		return  this.doubleRotation( this, to);
-	}
-	*/
 }
 Node.prototype.remove = function (node) {
 
