@@ -2,6 +2,7 @@
 <html>
 <head>
 	<title>AVL-Tree</title>
+	<script src='drawTree.js'></script>
 	<script src='http://code.jquery.com/jquery.js'></script>
 	<script type="text/javascript" src="avlTree.js"></script>
 	<link rel="stylesheet" type="text/css" href="avlTree.css" />
@@ -37,6 +38,7 @@ function addNode() {
 				node = node.insert( new Node(key) );
 			}
 			div.innerHTML = showTree(node,'green', '#ffc');
+			drawTree(node);
 		} else { console.log('error parse key');}
 		
 	} else { console.log('error get input'); }
@@ -50,9 +52,12 @@ function removeNode() {
 				node = node.remove( new Node(key) );
 				if( node ) {
 					div.innerHTML = showTree(node,'green', '#ffc');
+					
 				}  else { 
 					div.innerHTML = '';
+					
 				}
+				drawTree(node);
 			}
 		} else { console.log('err parse key'); }
 	} else { console.log('err get input'); }
@@ -60,13 +65,14 @@ function removeNode() {
 	var node;
     var div = document.createElement('div');
     document.body.appendChild(div);
-	var treeLength = 20;
+	var treeLength = 5;
     for( var i = 0; i < treeLength; i++) {
 	var key = Math.random()*100^0;
 	if( !node ) node = new Node(key);
 	else node.insert( new Node(key) ); 
 }
-div.innerHTML = showTree(node,'green', '#ffc');
+  drawTree(node);
+  div.innerHTML = showTree(node,'green', '#ffc');
 </script>
 </body>
 </html>
