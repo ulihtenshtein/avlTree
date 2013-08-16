@@ -2,6 +2,7 @@
 <html>
 <head>
 	<title>AVL-Tree</title>
+	<script src='http://code.jquery.com/jquery.js'></script>
 	<script type="text/javascript" src="avlTree.js"></script>
 	<link rel="stylesheet" type="text/css" href="avlTree.css" />
 </head>
@@ -59,6 +60,13 @@ function removeNode() {
 	var node;
     var div = document.createElement('div');
     document.body.appendChild(div);
+	var treeLength = 20;
+    for( var i = 0; i < treeLength; i++) {
+	var key = Math.random()*100^0;
+	if( !node ) node = new Node(key);
+	else node.insert( new Node(key) ); 
+}
+div.innerHTML = showTree(node,'green', '#ffc');
 </script>
 </body>
 </html>

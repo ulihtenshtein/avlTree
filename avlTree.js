@@ -65,9 +65,9 @@ Node.prototype.remove = function (node) {
 	}
 	function getNode (node, to) {
 		if (isLeaf(node) ) {
-			return getLeaf(node);
+			return node;
 		}
-		return node[to] = getNode(node[to], to);
+		return getNode(node[to], to);
 	}	
 	function whereLeaf(node) {
 		var to = '';
@@ -100,7 +100,8 @@ Node.prototype.remove = function (node) {
 		} else {
 			//seach leaf for change to node
 			to = (this.balance > 0 ) ? 'right' : 'left';
-			var leaf = getNode(this[to], to);
+			ato = (to == 'left') ? 'right' : 'left';
+			var leaf = getNode(this[to], ato);
 			this[to] = this[to].remove(leaf);
 			leaf.left = this.left;
 			leaf.right = this.right;
