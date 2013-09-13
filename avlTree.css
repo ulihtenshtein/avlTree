@@ -11,3 +11,6 @@ li {
 	right: 10px;
 	border:1px solid red;
 }
+canvas {
+	border:1px solid red;
+}

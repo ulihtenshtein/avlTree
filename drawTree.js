@@ -12,13 +12,13 @@ function drawTree( node ) {
 	canvas = document.createElement('canvas');
 	ctx  = canvas.getContext('2d');
 	
-	var deepth = getDeepth( node ) + 1;
+	var deepth = getDeepth( node );
 	
-	var nodes = Math.pow( 2, deepth);
+	var nodes = Math.pow( 2, deepth) + 1;
 
 	
 	var width = nodes * pxOnNode;
-		//alert("deepth: " + deepth + ", nodes:" + nodes + ", width: " + width);
+	//alert("deepth: " + deepth + ", nodes:" + nodes + ", width: " + width);
 	canvas.width = width;
 	canvas.height = width;
 	
@@ -42,14 +42,14 @@ function getDeepth(node){
 
 function drawNode(opt) {
 	ctx.moveTo(opt.x, opt.y);
-	ctx.font = 'normal bold ' + (2*opt.radius - 6) + 'px Arial';
+	ctx.font = 'normal bold ' + (2*opt.radius - 10) + 'px Arial';
 	ctx.fillStyle = 'blue';
 	ctx.textBaseline = 'middle';
 	ctx.fillText(opt.key, opt.x - opt.radius/1.4, opt.y + 2);
 	//opt.fillStyle = 'red';//'rgba(255,0,0,0.5)';
 	ctx.moveTo(opt.x + opt.radius, opt.y);
 	ctx.strokeStyle = 'red';
-	ctx.arc(opt.x, opt.y, opt.radius, 0, Math.PI*2,false);
+	ctx.arc(opt.x, opt.y, opt.radius, 0, Math.PI*2,true);
 	ctx.stroke();
 }
 function drawLine(opt){
